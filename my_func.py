@@ -9,8 +9,9 @@ import pandas as pd
 from pandas import DataFrame, to_datetime
 import gspread
 from gspread_dataframe import set_with_dataframe
-# import datetime as dt
 
+
+# import datetime as dt
 
 
 def export_to_sqlite(xl='data_.xlsx', lst_xl='', column=''):
@@ -37,7 +38,6 @@ def export_to_sqlite(xl='data_.xlsx', lst_xl='', column=''):
     # cursor.execute(f'CREATE TABLE IF NOT EXISTS {lst_xl} (cl_id int, product_name text, product_probability int)')
     cursor.execute(f'CREATE TABLE IF NOT EXISTS {lst_xl} {column}')
 
-
     # 2. Работа c xlsx файлом
 
     # Читаем файл и лист1 книги excel
@@ -49,17 +49,18 @@ def export_to_sqlite(xl='data_.xlsx', lst_xl='', column=''):
         # Объявление списка
         data = []
         # Цикл по столбцам начиная 1
-        for col in range(1, len(column)+1):
+        for col in range(1, len(column) + 1):
             # value содержит значение ячейки с координатами row col
             value = sheet.cell(row, col).value
             # Список который мы потом будем добавлять
             data.append(value)
         print(data)
 
-    # 3. Запись в базу и закрытие соединения
+        # 3. Запись в базу и закрытие соединения
 
         # Вставка данных в поля таблицы, необходимо менять количество записей вручную соответственно количеству столбцов
-        cursor.execute(f"INSERT INTO {lst_xl} VALUES (?, ?, ?, ?, ?, ?, ?);", (data[0], data[1].date(), data[2], data[3], data[4], data[5], data[6]))
+        cursor.execute(f"INSERT INTO {lst_xl} VALUES (?, ?, ?, ?, ?, ?, ?);",
+                       (data[0], data[1].date(), data[2], data[3], data[4], data[5], data[6]))
 
     # сохраняем изменения
     connect.commit()
@@ -126,14 +127,16 @@ def input_base(sql_request):
 def google_sheet_write(df):
     # ACCES GOOGLE SHEET
     sa = gspread.service_account(filename="service_account.json")
-    sh = sa.open_by_key('1VaHGl56XmDV-X3yTFK0EO68a7t9Z2LeP')
+    sh = sa.open_by_key('1YDUfbpkDdT6ABQrmBjH79LNHG5pevZPYfs4dwAL2hyo')
     worksheet = sh.worksheet("values")
+    print('законектились в гугл шитс')
 
     # CLEAR SHEET CONTENT
     range_of_cells = worksheet.range('A2:H10000')  # -> Select the range you want to clear
     for cell in range_of_cells:
         cell.value = ''
     worksheet.update_cells(range_of_cells)
+    print('таблица чиста')
 
     # APPEND DATA TO SHEET
     set_with_dataframe(worksheet, df)  # -> THIS EXPORTS YOUR DATAFRAME TO THE GOOGLE SHEET
@@ -141,12 +144,13 @@ def google_sheet_write(df):
     print('данные отправлены в гугл таблицы')
 
 
+'''переменные для загрузки таблиц в бд'''
 # переменные с наименованиями вкладок ексель соответственные названия страниц
 s_1, s_2, s_3 = 's_1', 's_2', 's_3'
 p_1, p_2, p_3, p_4 = 'p_1', 'p_2', 'p_3', 'p_4'
 
 # переменные с наименованиями столбцов в виде картежей по второму заданию, таблицы по первому заданию заводил немного иначе
-p_1_column = ('camp_id', 'camp_date', 'channel', 'group_type',	'client_id', 'delivery', 'open')
+p_1_column = ('camp_id', 'camp_date', 'channel', 'group_type', 'client_id', 'delivery', 'open')
 p_2_column = ('client_id', 'debt_date', 'debt_sum')
 p_3_column = ('client_id', 'payment_date', 'payment_sum')
 p_4_column = ('client_id', 'app_date', 'app_reason')
