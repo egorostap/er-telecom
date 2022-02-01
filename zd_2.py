@@ -1,25 +1,13 @@
-import sqlite3
-from sqlite3 import Error
-
-def create_connection(path):
-    connection = None
-    try:
-        connection = sqlite3.connect(path)
-        print("Connection to SQLite DB successful")
-    except Error as e:
-        print(f"The error {e}")
-
-    return connection
+import my_func
 
 
-def execute_query(connection, query):
-    cursor = connection.cursor()
-    try:
-        cursor.execute(query)
-        connection.commit()
-        print("Query executed successfully")
-    except Error as e:
-        print(f"The error '{e}' occurred")
+zd_2 = '''select * from p_1
+left join p_2 using(client_id)
+left join p_3 using(client_id)
+left join p_4 using(client_id)'''
 
-
+# Запуск функции
 if __name__ == '__main__':
+    # первый вариант решения: склеиваю таблицы в единую, отправляю в гуглшитс, затем в GDS, формулы завожу в GDS
+    df = my_func.input_base(sql_request=zd_2)
+    my_func.google_sheet_write(df)
