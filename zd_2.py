@@ -13,5 +13,3 @@ if __name__ == '__main__':
     df = my_func.input_base(sql_request=zd_2)
     # my_func.google_sheet_write(df)
 
-    # 2-й вариант
-

@@ -4,6 +4,7 @@ import my_func
 
 # переменные с решениями
 sql_requests_zd_1 = [
+    # решение 1.1
     '''
     select distinct s_1.cl_id,
     (select sum(revenue_summ)/count(cl_id) as arpu
@@ -41,6 +42,7 @@ sql_requests_zd_1 = [
     and cl_activ = 1
     ''',
 
+    # решение 1.2
     '''
     WITH t_0 AS
     (
@@ -80,6 +82,7 @@ sql_requests_zd_1 = [
     left join t_6 using (campaign_theme)
     ''',
 
+    # решение 1.3
     '''
     WITH A AS
     (
