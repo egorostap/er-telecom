@@ -6,7 +6,7 @@ import os
 import sqlite3
 import openpyxl
 import pandas as pd
-from pandas import DataFrame, to_datetime
+# from pandas import DataFrame, to_datetime
 import gspread
 from gspread_dataframe import set_with_dataframe
 

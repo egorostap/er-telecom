@@ -42,46 +42,33 @@ sql_requests_zd_1 = [
     ''',
 
     '''
-    WITH A AS
-    (
-    select cl_id, product_name, product_probability,
-    ROW_NUMBER() over (PARTITION by cl_id order by product_probability desc) as rownum
-    from s_3
-    )
-    SELECT cl_id, product_name, sum(product_probability)/count(product_probability) as average_top_3_prod
-    FROM A
-    WHERE rownum <= 3
-    group by cl_id
-    ''',
-
-    '''
     WITH t_0 AS
     (
-    SELECT campaign_theme, count(channel_id) as ch_0 from s_1 where channel_id = 0 group by campaign_theme
+    SELECT campaign_theme, count(distinct(cl_id)) as ch_0 from s_1 where channel_id = 0 and group_pos_1 = 1 group by campaign_theme
     ),
     t_1 AS
     (
-    SELECT campaign_theme, count(channel_id) as ch_1 from s_1 where channel_id = 1 group by campaign_theme
+    SELECT campaign_theme, count(distinct(cl_id)) as ch_1 from s_1 where channel_id = 1 and group_pos_1 = 1 group by campaign_theme
     ),
     t_2 AS 
     (
-    SELECT campaign_theme, count(channel_id) as ch_2 from s_1 where channel_id = 2 group by campaign_theme
+    SELECT campaign_theme, count(distinct(cl_id)) as ch_2 from s_1 where channel_id = 2 and group_pos_1 = 1 group by campaign_theme
     ),
     t_3 AS 
     (
-    SELECT campaign_theme, count(channel_id) as ch_3 from s_1 where channel_id = 3 group by campaign_theme
+    SELECT campaign_theme, count(distinct(cl_id)) as ch_3 from s_1 where channel_id = 3 and group_pos_1 = 1 group by campaign_theme
     ),
     t_4 AS 
     (
-    SELECT campaign_theme, count(channel_id) as ch_4 from s_1 where channel_id = 4 group by campaign_theme
+    SELECT campaign_theme, count(distinct(cl_id)) as ch_4 from s_1 where channel_id = 4 and group_pos_1 = 1 group by campaign_theme
     ),
     t_5 AS 
     (
-    SELECT campaign_theme, count(channel_id) as ch_5 from s_1 where channel_id = 5 group by campaign_theme
+    SELECT campaign_theme, count(distinct(cl_id)) as ch_5 from s_1 where channel_id = 5 and group_pos_1 = 1 group by campaign_theme
     ),
     t_6 AS 
     (
-    SELECT campaign_theme, count(channel_id) as ch_6 from s_1 where channel_id = 6 group by campaign_theme
+    SELECT campaign_theme, count(distinct(cl_id)) as ch_6 from s_1 where channel_id = 6 and group_pos_1 = 1 group by campaign_theme
     )
     SELECT t_0.campaign_theme, ch_0, ch_1, ch_2, ch_3, ch_4, ch_5, ch_6
     FROM t_0
@@ -91,6 +78,20 @@ sql_requests_zd_1 = [
     left join t_4 using (campaign_theme)
     left join t_5 using (campaign_theme)
     left join t_6 using (campaign_theme)
+    ''',
+
+    '''
+    WITH A AS
+    (
+    select cl_id, product_name, product_probability,
+    ROW_NUMBER() over (PARTITION by cl_id order by product_probability desc) as rownum
+    from s_3
+    )
+    SELECT cl_id, A2.product_name, sum(product_probability)/count(product_probability) as average_top_3_prod
+    FROM A 
+    left join (select cl_id, product_name from A where rownum = 3) A2 using(cl_id) 
+    WHERE rownum <= 3
+    group by cl_id
     '''
 ]
 
