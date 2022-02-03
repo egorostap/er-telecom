@@ -3,15 +3,13 @@
 # готовые запросы по домашнему заданию находятся в переменных: "zd_1_1 - zd_1_3"
 
 # import os
+# from pandas import DataFrame, to_datetime
+# import datetime as dt
 import sqlite3
 import openpyxl
 import pandas as pd
-# from pandas import DataFrame, to_datetime
 import gspread
 from gspread_dataframe import set_with_dataframe
-
-
-# import datetime as dt
 
 
 def export_to_sqlite(xl='data_.xlsx', lst_xl='', column=''):
