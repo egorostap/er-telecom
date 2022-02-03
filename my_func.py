@@ -2,7 +2,7 @@
 # эксель таблицы загружены в бд sqlite, данная база данных также находится в репозитории проекта
 # готовые запросы по домашнему заданию находятся в переменных: "zd_1_1 - zd_1_3"
 
-import os
+# import os
 import sqlite3
 import openpyxl
 import pandas as pd
@@ -20,22 +20,18 @@ def export_to_sqlite(xl='data_.xlsx', lst_xl='', column=''):
     # 1. Создание и подключение к базе
 
     # Получаем текущую папку проекта
-    prj_dir = os.path.abspath(os.path.curdir)
-
-    a = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    # prj_dir = os.path.abspath(os.path.curdir)
 
     # Имя базы
     base_name = 's.sqlite3'
 
     # метод sqlite3.connect автоматически создаст базу, если ее нет
-    connect = sqlite3.connect(prj_dir + '/' + base_name)
+    # connect = sqlite3.connect(prj_dir + '/' + base_name)
+    connect = sqlite3.connect(base_name)
     # курсор - это специальный объект, который делает запросы и получает результаты запросов
     cursor = connect.cursor()
 
     # создание таблицы если ее не существует
-    # cursor.execute(f'CREATE TABLE IF NOT EXISTS {lst_xl} (cl_id int, calc_period int, channel_id int , campaign_theme text, group_pos_1 int)')
-    # cursor.execute(f'CREATE TABLE IF NOT EXISTS {lst_xl} (cl_id int, calc_period int, revenue_summ int , cl_activ int)')
-    # cursor.execute(f'CREATE TABLE IF NOT EXISTS {lst_xl} (cl_id int, product_name text, product_probability int)')
     cursor.execute(f'CREATE TABLE IF NOT EXISTS {lst_xl} {column}')
 
     # 2. Работа c xlsx файлом
@@ -71,13 +67,10 @@ def export_to_sqlite(xl='data_.xlsx', lst_xl='', column=''):
 def clear_base(table):
     '''Очистка базы sqlite'''
 
-    # Получаем текущую папку проекта
-    prj_dir = os.path.abspath(os.path.curdir)
-
     # Имя базы
     base_name = 's.sqlite3'
 
-    connect = sqlite3.connect(prj_dir + '/' + base_name)
+    connect = sqlite3.connect(base_name)
     cursor = connect.cursor()
 
     # Запись в базу, сохранение и закрытие соединения
@@ -89,13 +82,10 @@ def clear_base(table):
 def input_base(sql_request):
     '''SQL запрос возвращает таблицу'''
 
-    # Получаем текущую папку проекта
-    prj_dir = os.path.abspath(os.path.curdir)
-
     # Имя базы
     base_name = 's.sqlite3'
     # соединение с базой
-    connect = sqlite3.connect(prj_dir + '/' + base_name)
+    connect = sqlite3.connect(base_name)
 
     # Запрос в базу, сохранение и закрытие соединения
     df = pd.read_sql(sql_request, connect)

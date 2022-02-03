@@ -1,9 +1,19 @@
 import my_func
+import seaborn as sb
+from matplotlib import pyplot as plt
+
+
 
 zd_2 = '''select * from p_1
 left join p_2 using(client_id)
 left join p_3 using(client_id)
 left join p_4 using(client_id)'''
+
+sum_channels = '''select channel, sum(payment_sum) payment_sum from p_1
+left join p_2 using(client_id)
+left join p_3 using(client_id)
+left join p_4 using(client_id)
+group by channel'''
 
 # Запуск функции
 if __name__ == '__main__':
@@ -19,4 +29,9 @@ if __name__ == '__main__':
     profit = viruchka_after_sms - payment_for_sms
     roi = (viruchka_after_sms - payment_for_sms) / payment_for_sms * 100
     dict_metrix = {'затраты на смс рассылку': payment_for_sms, 'выручка после отправки смс': viruchka_after_sms, 'профит': profit, 'roi': f'{roi}%'}
-    print(dict_metrix)
+    print(f'sms stats: {dict_metrix}')
+
+    # визуализация суммы оплат клиентами задолженности в разрезе источников трафика
+    sum_channels_df = my_func.input_base(sql_request=sum_channels)
+    sb.barplot(x="channel", y="payment_sum", data=sum_channels_df)
+    plt.show()
