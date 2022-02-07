@@ -2,18 +2,10 @@ import my_func
 import seaborn as sb
 from matplotlib import pyplot as plt
 
-
-
 select_all_table_values = '''select * from p_1
 left join p_2 using(client_id)
 left join p_3 using(client_id)
 left join p_4 using(client_id)'''
-
-difference_arpu_target_group_control_group = '''select group_type, (sum(p_3.payment_sum) - count(delivery)*5)/count(p_1.client_id) as value
-from p_1
-left join p_3 using(client_id)
-group by group_type'''
-
 
 # Запуск функции
 if __name__ == '__main__':
@@ -25,10 +17,15 @@ if __name__ == '__main__':
 
     # вариант вычислений c sql запросами с визуализацией только в питон
 
-    count_control_group = int(my_func.input_base(sql_request='select count(client_id) as value from p_1 where group_type = "КГ"')['value'])
-    count_target_group = int(my_func.input_base(sql_request='select count(client_id) as value from p_1 where group_type = "ЦГ"')['value'])
-    target_group_email_campaign_costs = int(my_func.input_base(sql_request='select count(delivery)*3 as value from p_1 where channel = "email" and group_type = "ЦГ"')['value'])
-    target_group_sms_campaign_costs = int(my_func.input_base(sql_request='select count(delivery)*7 as value from p_1 where channel = "SMS" and group_type = "ЦГ"')['value'])
+    count_control_group = int(
+        my_func.input_base(sql_request='select count(client_id) as value from p_1 where group_type = "КГ"')['value'])
+    count_target_group = int(
+        my_func.input_base(sql_request='select count(client_id) as value from p_1 where group_type = "ЦГ"')['value'])
+    target_group_email_campaign_costs = int(my_func.input_base(
+        sql_request='select count(delivery)*3 as value from p_1 where channel = "email" and group_type = "ЦГ"')[
+                                                'value'])
+    target_group_sms_campaign_costs = int(my_func.input_base(
+        sql_request='select count(delivery)*7 as value from p_1 where channel = "SMS" and group_type = "ЦГ"')['value'])
     target_group_campaign_costs = target_group_email_campaign_costs + target_group_sms_campaign_costs
     control_group_debit_payment_sum = int(my_func.input_base(sql_request='''
         select sum(p_3.payment_sum) as value
@@ -55,7 +52,8 @@ if __name__ == '__main__':
         left join p_3 using(client_id)
         where group_type = "ЦГ"
         ''')['value'])
-    percent_difference_arpu_from_target_group_to_control_group = round((arpu_target_group / arpu_control_group * 100 - 100), 2)
+    percent_difference_arpu_from_target_group_to_control_group = round(
+        (arpu_target_group / arpu_control_group * 100 - 100), 2)
 
     dict_metrix = {'число клиентов КГ:': count_control_group,
                    'число клиентов ЦГ:': count_target_group,
@@ -72,8 +70,10 @@ if __name__ == '__main__':
     for key, value in dict_metrix.items():
         print(key, value)
 
-
-    # визуализация разницы arpu ЦГ / КГ
-    difference_arpu_target_group_control_group_df = my_func.input_base(sql_request=difference_arpu_target_group_control_group)
+    # визуализация разницы arpu ЦГ / КГ с небольшой погрешностью на стоимость сообщений
+    difference_arpu_target_group_control_group_df = my_func.input_base(sql_request='''select group_type, (sum(p_3.payment_sum) - count(delivery)*5)/count(p_1.client_id) as value
+from p_1
+left join p_3 using(client_id)
+group by group_type''')
     sb.barplot(x="group_type", y="value", data=difference_arpu_target_group_control_group_df)
     plt.show()
