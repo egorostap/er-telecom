@@ -91,7 +91,6 @@ def input_base(sql_request):
     # df_anythink.to_sql(“name_table”, connect)
     connect.commit()
     connect.close()
-    print(df)
     return df
 
 

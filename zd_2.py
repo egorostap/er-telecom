@@ -4,16 +4,15 @@ from matplotlib import pyplot as plt
 
 
 
-zd_2 = '''select * from p_1
+select_all_table_values = '''select * from p_1
 left join p_2 using(client_id)
 left join p_3 using(client_id)
 left join p_4 using(client_id)'''
 
-sum_channels = '''select channel, sum(payment_sum) payment_sum from p_1
-left join p_2 using(client_id)
+difference_arpu_target_group_control_group = '''select group_type, (sum(p_3.payment_sum) - count(delivery)*5)/count(p_1.client_id) as value
+from p_1
 left join p_3 using(client_id)
-left join p_4 using(client_id)
-group by channel'''
+group by group_type'''
 
 
 # Запуск функции
@@ -21,7 +20,7 @@ if __name__ == '__main__':
     # вариант решения в связке  googlesheets и GDS: склеиваю таблицы в единую по ключу client_id, отправляю в гуглшитс, затем в GDS, формулы завожу в GDS
     # таблица с документом: https://docs.google.com/spreadsheets/d/1YDUfbpkDdT6ABQrmBjH79LNHG5pevZPYfs4dwAL2hyo/edit#gid=0
     # ссылка на отчет в GDS: https://datastudio.google.com/u/0/reporting/2e199d1a-c72e-4509-a10d-edd53fc2168d/page/q5jkC
-    # df = my_func.input_base(sql_request=zd_2)
+    # df = my_func.input_base(sql_request=select_all_table_values)
     # my_func.google_sheet_write(df)
 
     # вариант вычислений c sql запросами с визуализацией только в питон
@@ -74,8 +73,7 @@ if __name__ == '__main__':
         print(key, value)
 
 
-
-    # визуализация суммы оплат клиентами задолженности в разрезе источников трафика
-    # sum_channels_df = my_func.input_base(sql_request=sum_channels)
-    # sb.barplot(x="channel", y="payment_sum", data=sum_channels_df)
-    # plt.show()
+    # визуализация разницы arpu ЦГ / КГ
+    difference_arpu_target_group_control_group_df = my_func.input_base(sql_request=difference_arpu_target_group_control_group)
+    sb.barplot(x="group_type", y="value", data=difference_arpu_target_group_control_group_df)
+    plt.show()
