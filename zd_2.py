@@ -21,37 +21,37 @@ if __name__ == '__main__':
         my_func.input_base(sql_request='select count(client_id) as value from p_1 where group_type = "КГ"')['value'])
     count_target_group = int(
         my_func.input_base(sql_request='select count(client_id) as value from p_1 where group_type = "ЦГ"')['value'])
-    target_group_email_campaign_costs = int(my_func.input_base(
+    target_group_email_campaign_costs = float(my_func.input_base(
         sql_request='select count(delivery)*3 as value from p_1 where channel = "email" and group_type = "ЦГ"')[
                                                 'value'])
-    target_group_sms_campaign_costs = int(my_func.input_base(
+    target_group_sms_campaign_costs = float(my_func.input_base(
         sql_request='select count(delivery)*7 as value from p_1 where channel = "SMS" and group_type = "ЦГ"')['value'])
     target_group_campaign_costs = target_group_email_campaign_costs + target_group_sms_campaign_costs
-    control_group_debit_payment_sum = int(my_func.input_base(sql_request='''
+    control_group_debit_payment_sum = float(my_func.input_base(sql_request='''
         select sum(p_3.payment_sum) as value
         from p_1
         left join p_3 using(client_id)
         where group_type = "КГ"
         ''')['value'])
-    target_group_debit_payment_sum_exclude_campaign_cost_sum = int(my_func.input_base(sql_request='''
+    target_group_debit_payment_sum_exclude_campaign_cost_sum = float(my_func.input_base(sql_request='''
         select (sum(p_3.payment_sum) - (select count(delivery)*3 from p_1 where channel = "email" and group_type = "ЦГ") - (select count(delivery)*7 from p_1 where channel = "SMS" and group_type = "ЦГ")) as value
         from p_1
         left join p_3 using(client_id)
         where group_type = "ЦГ"
         ''')['value'])
 
-    arpu_control_group = int(my_func.input_base(sql_request='''
+    arpu_control_group = float(my_func.input_base(sql_request='''
         select sum(p_3.payment_sum)/count(p_1.client_id) as value
         from p_1
         left join p_3 using(client_id)
         where group_type = "КГ"
         ''')['value'])
-    arpu_target_group = int(my_func.input_base(sql_request='''
+    arpu_target_group = round(float(my_func.input_base(sql_request='''
         select (sum(p_3.payment_sum) - (select count(delivery)*3 from p_1 where channel = "email" and group_type = "ЦГ") - (select count(delivery)*7 from p_1 where channel = "SMS" and group_type = "ЦГ"))/count(p_1.client_id) as value
         from p_1
         left join p_3 using(client_id)
         where group_type = "ЦГ"
-        ''')['value'])
+        ''')['value']), 2)
     percent_difference_arpu_from_target_group_to_control_group = round(
         (arpu_target_group / arpu_control_group * 100 - 100), 2)
 
