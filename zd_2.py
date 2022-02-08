@@ -72,8 +72,8 @@ if __name__ == '__main__':
 
     # визуализация разницы arpu ЦГ / КГ с небольшой погрешностью на стоимость сообщений
     difference_arpu_target_group_control_group_df = my_func.input_base(sql_request='''select group_type, (sum(p_3.payment_sum) - count(delivery)*5)/count(p_1.client_id) as value
-from p_1
-left join p_3 using(client_id)
-group by group_type''')
+    from p_1
+    left join p_3 using(client_id)
+    group by group_type''')
     sb.barplot(x="group_type", y="value", data=difference_arpu_target_group_control_group_df)
     plt.show()
